@@ -36,13 +36,13 @@ async def general_check():
     print(new_game) 
     if new_game:
         pomme= bot.get_channel(datas.epicgame_channel)
-        await pomme.send(f"<&{datas.role_epicgame}>")
+        await pomme.send(f"<@&{datas.role_epicgame}>")
         for new_game in new_game:
             await pomme.send(new_game['title']+"\n"+new_game['description'])
             await pomme.send(new_game['image'])
     if maj_hs:
         pomme= bot.get_channel(datas.hearstone_channel)
-        await pomme.send(f"<&{datas.role_hearstone}>")
+        await pomme.send(f"<@&{datas.role_hearstone}>")
         await pomme.send(f"nouvelle maj hearstone : {maj_hs['title']}\n{maj_hs['url']}")
 
 
@@ -68,4 +68,4 @@ async def soluce_one_piece(interaction: discord.Interaction,reponse:str):
 
 
 
-bot.run("OTkyMDk1MzcyMDkwNTQwMjE0.G_TRPx.OwMqCebINJPG5HWJXNaAtahK1PNOJUEAzIj-xo")
+bot.run(datas.BOT_TOKEN)
