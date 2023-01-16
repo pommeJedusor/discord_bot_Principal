@@ -1,6 +1,6 @@
 import requests, json, random, asyncio
 
-async def quiz_one_piece():
+async def quiz_one_piece_request():
     url = "https://api.api-onepiece.com/characters"
     datas = requests.get(url).json()
     personnage_id = random.randint(1,len(datas))
