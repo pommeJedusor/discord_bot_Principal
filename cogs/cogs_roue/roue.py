@@ -12,7 +12,7 @@ class RoueDeLaGrosseMerde(commands.Cog):
     async def roue_de_la_grosse_merde(self,interaction:discord.Interaction):
         member_filtered = []
         for member in interaction.guild.members:
-            if not member.bot:
+            if not member.bot and not member.id==309918440791998485:
                 member_filtered.append(member)
         alea_number = random.randint(0,len(member_filtered)-1)
         await interaction.response.send_message(f"suspens...",ephemeral=True)
