@@ -19,6 +19,7 @@ async def on_ready():
     try:
         await bot.load_extension('cogs.one_piece_quiz.cogs_quiz')
         await bot.load_extension('cogs.cogs_roue.roue')
+        await bot.load_extension('cogs.cogs_spy_fall.spyfall')
         synced = await bot.tree.sync()
         print(f"synced {len(synced) } command(s)")
     except Exception as e:
