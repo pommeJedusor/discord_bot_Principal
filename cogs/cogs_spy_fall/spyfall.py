@@ -5,7 +5,7 @@ from discord.ext import commands
 import random
 
 def get_locations():
-    with open("cogs/cogs_spy_fall/locations.txt","r") as f:
+    with open("cogs/cogs_spy_fall/locations.txt","r",encoding="utf8") as f:
         locations = f.read()
         locations = locations.split("\n")
     return locations
@@ -153,12 +153,11 @@ class ViewParty(discord.ui.View):
         player_filter = lambda x: x["user"]==interaction.user
         player = list(filter(player_filter,self.players))
         if self.is_a_player(interaction.user) and player[0]["is_impostor"]:
-            player = "imposteur"
+            await interaction.response.send_message(f"vous êtes l'imposteur",ephemeral=True)
         elif not self.is_a_player(interaction.user):
             await interaction.response.send_message(f"vous n'êtes pas dans la partie",ephemeral=True)
         else:
-            player = self.location
-        await interaction.response.send_message(f"votre rôle est {player}",ephemeral=True)
+            await interaction.response.send_message(f"le lieu est {self.location}",ephemeral=True)
 
     @discord.ui.button(label="voter")
     async def voter(self,interaction:discord.Interaction, button:discord.Button):
