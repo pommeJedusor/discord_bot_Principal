@@ -4,6 +4,13 @@ from discord.ext import commands
 
 import random
 
+def get_locations():
+    with open("cogs/cogs_spy_fall/locations.txt","r") as f:
+        locations = f.read()
+        locations = locations.split("\n")
+    return locations
+
+
 class DropDownVoteSpy(discord.ui.Select):
     def __init__(self,old_self):
         self.players = old_self.players
@@ -86,7 +93,7 @@ class DropDownViewSpy(discord.ui.Select):
         self.players = old_self.players
         self.location = old_self.location
         options = []
-        locations = ["pain","pomme","poire","patate","vache"]
+        locations = get_locations()
         for location in locations:
             options.append(discord.SelectOption(label=location,value=location))
         super().__init__(placeholder="choisissez votre réponse", min_values=1, max_values=1, options=options)
@@ -130,7 +137,7 @@ class ViewParty(discord.ui.View):
         return final_players
 
     def set_location(self):
-        locations = ["pain","pomme","poire","patate","vache"]
+        locations = get_locations()
         return random.choice(locations)
 
     def __init__(self, players):
