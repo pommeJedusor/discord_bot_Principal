@@ -83,7 +83,7 @@ class DropDownVoteSpy(discord.ui.Select):
 
 class VoteView(discord.ui.View):
     def __init__(self,old_self):
-        super().__init__()
+        super().__init__(timeout=None)
         self.players = old_self.players
         self.location = old_self.location
         self.add_item(DropDownVoteSpy(self))
@@ -141,7 +141,7 @@ class ViewParty(discord.ui.View):
         return random.choice(locations)
 
     def __init__(self, players):
-        super().__init__()
+        super().__init__(timeout=None)
         self.players=self.set_impostor(players)
         self.location = self.set_location()
         self.vote = 0
@@ -188,7 +188,7 @@ class ViewParty(discord.ui.View):
 
 class ViewLobby(discord.ui.View):
     def __init__(self, nb_players):
-        super().__init__()
+        super().__init__(timeout=None)
         self.players=[]
         self.nb_players = nb_players
 
