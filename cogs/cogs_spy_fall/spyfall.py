@@ -194,7 +194,7 @@ class ViewLobby(discord.ui.View):
 
     @discord.ui.button(label="rejoindre")
     async def rejoindre(self,interaction:discord.Interaction, button:discord.Button):
-        if not interaction.user.id in self.players and not self.nb_players==len(self.players)+1:
+        if not interaction.user in self.players and not self.nb_players==len(self.players)+1:
             self.players.append(interaction.user)
             await interaction.response.edit_message(content=f"nombre de joueurs = {len(self.players)}")
         elif interaction.user in self.players:
