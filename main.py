@@ -27,6 +27,13 @@ async def on_ready():
     general_check.start()
 
 
+@bot.tree.command(name="delete_ussop_message")
+async def delete_ussop_message(interaction:discord.Interaction):
+    async for message in interaction.channel.history(limit=200):
+        if message.author.id==992095372090540214:
+            message.delete()
+    interaction.response.send_message("done",delete_after=2)
+
 @tasks.loop(hours=1)
 async def general_check():
     maj_hs = await check.maj_hearstone()
