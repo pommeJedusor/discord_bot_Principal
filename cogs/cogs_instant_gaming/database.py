@@ -11,14 +11,14 @@ class Game:
         self.versions = []
         self.users = []
 
-def new_database(game):
+async def new_database(game):
     """
     écrase la base de donné avec le jeu donné en paramêtre 
     """
     with open(DATA_FILE,'wb') as f:
         pickle.Pickler(f).dump([game])
 
-def game_database():
+async def game_database():
     """
     retourne tous les jeux dans la base de données
     """
@@ -26,18 +26,18 @@ def game_database():
         result = pickle.Unpickler(f).load()
     return result
 
-def newgame_dtb(game):
+async def newgame_dtb(game):
     """
     ajoute le jeu à la base de donnéeS
     """
-    database = game_database()
+    database = await game_database()
     database.append(game)
     with open(DATA_FILE,'wb') as f:
         pickle.Pickler(f).dump(database)
 
-def delete_game(game_name):
+async def delete_game(game_name):
     game_find = False
-    games = game_database()
+    games = await game_database()
     for game in games:
         if game.name==game_name:
             game_find=True
@@ -47,12 +47,12 @@ def delete_game(game_name):
         pickle.Pickler(f).dump(games)
     return game_find
 
-def update_game(game_find):
+async def update_game(game_find):
     """
     update le jeu dans la base de donné et renvoi si cela a réussis ou échoué
     """
     find=False
-    games = game_database()
+    games = await game_database()
     for game in games:
         if game.name == game_find.name:
             find=True

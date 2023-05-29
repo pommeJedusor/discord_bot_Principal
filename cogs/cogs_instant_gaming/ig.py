@@ -40,7 +40,7 @@ class DropdownViewVersions(discord.ui.View):
     async def validate(self,interaction:discord.Interaction, button:discord.Button):
         self.game.versions = self.versions
         self.game.users.append(interaction.user.id)
-        database.newgame_dtb(self.game)
+        await database.newgame_dtb(self.game)
         await interaction.response.send_message(f"{self.versions}")
 
 
@@ -77,12 +77,12 @@ class InstantGaming(commands.Cog):
 
     @app_commands.command(name="instant_gaming",description="permet d'ajouter un jeu à la liste")
     async def add_game(self,interaction:discord.Interaction,name:str):
-        view = DropdownView(self.bot,scrap.get_games(name=name,number=10))
+        view = DropdownView(self.bot,await scrap.get_games(name=name,number=10))
         await interaction.response.send_message("choisissez votre jeu",view=view,ephemeral=True)
 
     @app_commands.command(name="games_ig",description="permet de voir les jeux dont on suit l'activité des prix")
     async def games_ig(self,interaction:discord.Interaction):
-        games = database.game_database()
+        games = await database.game_database()
         text="vos jeux:\n"
         for game in games:
             if interaction.user.id in game.users:
@@ -92,7 +92,7 @@ class InstantGaming(commands.Cog):
     @app_commands.command(name="delete_game",description="permet de supprimer un jeu de ceux que l'on suit")
     async def delete_game(self,interaction:discord.Interaction,name:str):
         find = False
-        games = database.game_database()
+        games = await database.game_database()
         for game in games:
             if game.name==name and interaction.user.id in game.users:
                 find = True
@@ -101,10 +101,10 @@ class InstantGaming(commands.Cog):
         if not find:
             await interaction.response.send_message("jeux non trouvé")
         else:
-            database.delete_game(the_game.name)
+            await database.delete_game(the_game.name)
             if not the_game.users == [interaction.user.id]:
                 the_game.users.remove(interaction.user.id)
-                database.newgame_dtb(the_game)
+                await database.newgame_dtb(the_game)
             await interaction.response.send_message(f"le jeu {the_game.name} a été supprimé avec succès")
 
         

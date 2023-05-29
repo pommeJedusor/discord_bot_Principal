@@ -43,7 +43,7 @@ def get_versions(link):
         return [link]
 
 
-def get_games(name, number):
+async def get_games(name, number):
     """
     retourne une lisre de number jeux les plus probable avec le nom
     """
@@ -79,7 +79,7 @@ def get_games(name, number):
 
     return Games[:number]
 
-def get_price(game):
+async def get_price(game):
     """
     retourne le prix de la version la moins chère
     """
