@@ -20,6 +20,7 @@ async def on_ready():
         await bot.load_extension('cogs.one_piece_quiz.cogs_quiz')
         await bot.load_extension('cogs.cogs_roue.roue')
         await bot.load_extension('cogs.cogs_spy_fall.spyfall')
+        await bot.load_extension('cogs.cogs_instant_gaming.ig')
         synced = await bot.tree.sync()
         print(f"synced {len(synced) } command(s)")
     except Exception as e:
@@ -41,15 +42,15 @@ async def general_check():
     print(maj_hs)
     print(new_game) 
     if new_game:
-        pomme= bot.get_channel(datas.epicgame_channel)
-        await pomme.send(f"<@&{datas.role_epicgame}>")
+        epic_channel= bot.get_channel(datas.epicgame_channel)
+        await epic_channel.send(f"<@&{datas.role_epicgame}>")
         for new_game in new_game:
-            await pomme.send(new_game['title']+"\n"+new_game['description'])
-            await pomme.send(new_game['image'])
+            await epic_channel.send(new_game['title']+"\n"+new_game['description'])
+            await epic_channel.send(new_game['image'])
     if maj_hs:
-        pomme= bot.get_channel(datas.hearstone_channel)
-        await pomme.send(f"<@&{datas.role_hearstone}>")
-        await pomme.send(f"nouvelle maj hearstone : {maj_hs['title']}\n{maj_hs['url']}")
+        hearstone_channel= bot.get_channel(datas.hearstone_channel)
+        await hearstone_channel.send(f"<@&{datas.role_hearstone}>")
+        await hearstone_channel.send(f"nouvelle maj hearstone : {maj_hs['title']}\n{maj_hs['url']}")
 
 
 bot.run(datas.BOT_TOKEN)

@@ -20,7 +20,7 @@ def new_database(game):
 
 def game_database():
     """
-    retourne tous les jeux dans la base de donnéesS
+    retourne tous les jeux dans la base de données
     """
     with open(DATA_FILE,'rb') as f:
         result = pickle.Unpickler(f).load()

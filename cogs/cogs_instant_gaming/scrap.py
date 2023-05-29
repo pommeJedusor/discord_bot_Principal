@@ -1,7 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 
-from database import Game
+from cogs.cogs_instant_gaming.database import Game
+#from database import Game
 
 URL = "https://www.instant-gaming.com/fr/rechercher/?query="
 
