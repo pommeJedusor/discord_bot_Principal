@@ -74,7 +74,7 @@ def get_games(name, number):
         if not link:
             link = game.find('a',{'class':'cover'})
         link = link['href']
-        Games.append(Game(name,price,discount,image,link))
+        Games.append(Game(name,price,image,link))
 
     return Games[:number]
 

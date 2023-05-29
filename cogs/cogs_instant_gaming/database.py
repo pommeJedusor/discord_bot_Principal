@@ -3,10 +3,9 @@ import pickle
 DATA_FILE = 'test.data'
 
 class Game:
-    def __init__(self,name,price,discount,image,link):
+    def __init__(self,name,price,image,link):
         self.name = name
         self.price = price
-        self.discount = discount
         self.image = image
         self.link = link
         self.versions = []
