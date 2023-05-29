@@ -1,5 +1,5 @@
 #module de base
-import json, requests
+import asyncio
 
 #modules discords
 import discord
@@ -8,6 +8,7 @@ from discord.ext import commands, tasks
 #modules cogs
 from cogs.epicgames_hearstone import check
 from cogs.one_piece_quiz import quiz
+from cogs.cogs_instant_gaming import ig_task, database
 from datas import datas
 
 bot=commands.Bot(command_prefix="!", intents=discord.Intents.all())
@@ -40,17 +41,28 @@ async def general_check():
     maj_hs = await check.maj_hearstone()
     new_game = await check.new_games_epicgames()   
     print(maj_hs)
-    print(new_game) 
+    print(new_game)
+    #epic game
     if new_game:
         epic_channel= bot.get_channel(datas.epicgame_channel)
         await epic_channel.send(f"<@&{datas.role_epicgame}>")
         for new_game in new_game:
             await epic_channel.send(new_game['title']+"\n"+new_game['description'])
             await epic_channel.send(new_game['image'])
+    #hearstone
     if maj_hs:
         hearstone_channel= bot.get_channel(datas.hearstone_channel)
         await hearstone_channel.send(f"<@&{datas.role_hearstone}>")
         await hearstone_channel.send(f"nouvelle maj hearstone : {maj_hs['title']}\n{maj_hs['url']}")
+    #instant gaming
+    games_reduce = await ig_task.main()
+    ig_channel = bot.get_channel(datas.instant_gaming_channel)
+    for game in games_reduce:
+        await asyncio.sleep(0,2)
+        text=""
+        for user in game.users:
+            text+=f"<@{user}>"
+        await ig_channel.send(f"le jeu {game.name} est désomais à {game.price}\n{text}\n{game.link}")
 
 
 bot.run(datas.BOT_TOKEN)

@@ -30,7 +30,6 @@ HEADERS = {'authority': 'www.instant-gaming.com',
 
 def get_versions(link):
     r = requests.get(url = link,headers=HEADERS)
-    #print(r)
     soup = BeautifulSoup(r.text,'html.parser')
     try:
         list_version = soup.find('div',{'class':'choices'})
@@ -50,14 +49,12 @@ async def get_games(name, number):
     #request
     url = URL+name
     r = requests.get(url=url,headers=HEADERS)
-    #print(r)
 
     #parsage
     soup = BeautifulSoup(r.text,'html.parser')
     all_games = soup.find('div',{'class':'search listing-games'})
     games = all_games.findAll('div',{'class':'item force-badge categoryBest'})
     games.extend(all_games.findAll('div',{'class':'item force-badge'}))
-    #print(f"nb games: {len(games)}")
 
     #compilation des jeux
     Games=[]
@@ -86,14 +83,9 @@ async def get_price(game):
     prices_versions = []
     for version in game.versions:
         r = requests.get(url=version,headers=HEADERS)
-        print(version)
         soup = BeautifulSoup(r.text,'html.parser')
         stock = soup.find('div',{'class':'stock'})
         if stock:
-            print("en stock")
             price = soup.find('div',{'class':'total'}).text
-            print(price)
             prices_versions.append(float(price[:-1]))
-        else:
-            print("pas en stock")
     return min(prices_versions)
