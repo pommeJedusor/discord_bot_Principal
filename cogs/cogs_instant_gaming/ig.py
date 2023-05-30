@@ -109,7 +109,7 @@ class InstantGaming(commands.Cog):
             if not the_game.users == [interaction.user.id]:
                 the_game.users.remove(interaction.user.id)
                 await database.newgame_dtb(the_game)
-            await interaction.response.send_message(f"le jeu {the_game.name} a été supprimé avec succès")
+            await interaction.response.send_message(f"le jeu {the_game.name} a été supprimé avec succès",ephemeral=True)
 
         
 
