@@ -6,14 +6,14 @@ class quize(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @discord.app_commands.command(name="One_Piece_quiz",description="permet de participer à un quiz")
+    @discord.app_commands.command(name="one_piece_quiz",description="permet de participer à un quiz")
     async def quiz_one_piece(self,interaction: discord.Interaction):
         global perso
         perso = await quiz.quiz_one_piece_request()
         await interaction.response.send_message(perso[0])
         perso = perso[1]
 
-    @discord.app_commands.command(name="One_Piece_soluce",description="permet de répondre au quiz")
+    @discord.app_commands.command(name="one_piece_soluce",description="permet de répondre au quiz")
     async def soluce_one_piece(self,interaction: discord.Interaction,reponse:str):
         global perso    
         if await quiz.validator_response_one_piece(reponse,perso):
