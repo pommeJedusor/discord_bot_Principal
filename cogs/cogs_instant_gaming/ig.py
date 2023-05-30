@@ -75,12 +75,12 @@ class InstantGaming(commands.Cog):
         self.bot = bot
 
 
-    @app_commands.command(name="instant_gaming",description="permet d'ajouter un jeu à la liste")
+    @app_commands.command(name="ig_ajouter_jeu",description="permet d'ajouter un jeu à la liste")
     async def add_game(self,interaction:discord.Interaction,name:str):
         view = DropdownView(self.bot,await scrap.get_games(name=name,number=10))
         await interaction.response.send_message("choisissez votre jeu",view=view,ephemeral=True)
 
-    @app_commands.command(name="games_ig",description="permet de voir les jeux dont on suit l'activité des prix")
+    @app_commands.command(name="ig_voir_jeux",description="permet de voir les jeux dont on suit l'activité des prix")
     async def games_ig(self,interaction:discord.Interaction):
         games = await database.game_database()
         text="vos jeux:\n"
@@ -89,7 +89,7 @@ class InstantGaming(commands.Cog):
                 text+=f"{game.name}: {game.price}\n"
         await interaction.response.send_message(text,ephemeral=True)
 
-    @app_commands.command(name="delete_game",description="permet de supprimer un jeu de ceux que l'on suit")
+    @app_commands.command(name="ig_supprimer_jeu",description="permet de supprimer un jeu de ceux que l'on suit")
     async def delete_game(self,interaction:discord.Interaction,name:str):
         find = False
         games = await database.game_database()
