@@ -116,8 +116,8 @@ async def get_price(game):
     for version in game.versions:
         r = requests.get(url=version,headers=HEADERS)
         soup = BeautifulSoup(r.text,'html.parser')
-        stock = soup.find('div',{'class':'stock'})
-        if stock:
+        nostock = soup.find('div',{'class':'nostock'})
+        if not nostock:
             price = soup.find('div',{'class':'total'}).text
             prices_versions.append(float(price[:-1]))
     return min(prices_versions)
