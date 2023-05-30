@@ -1,4 +1,4 @@
-import requests, json, random, asyncio
+import requests, random
 
 async def quiz_one_piece_request():
     url = "https://api.api-onepiece.com/characters"
@@ -7,13 +7,13 @@ async def quiz_one_piece_request():
     url_perso = f"https://api.api-onepiece.com/characters/{personnage_id}"
     datas_perso = requests.get(url_perso).json()
     fruit = "n'as pas de fruit du démon"
-    if datas_perso["fruitId"]:
-        datas_perso["fruitId"] = requests.get(f"https://api.api-onepiece.com/fruits/"+str(datas_perso["fruitId"])).json()
-        fruit = f"a le {datas_perso['fruitId']['french_name']}"
+    if datas_perso["fruit_id"]:
+        datas_perso["fruit_id"] = requests.get(f"https://api.api-onepiece.com/fruits/"+str(datas_perso["fruit_id"])).json()
+        fruit = f"a le {datas_perso['fruit_id']['french_name']}"
     crew = "n'as pas de crew"
-    if datas_perso["crewId"]:
-        datas_perso["crewId"] = requests.get(f"https://api.api-onepiece.com/crews/"+str(datas_perso["crewId"])).json()
-        crew = f"fait partie de {datas_perso['crewId']['french_name']}"
+    if datas_perso["crew_id"]:
+        datas_perso["crew_id"] = requests.get(f"https://api.api-onepiece.com/crews/"+str(datas_perso["crew_id"])).json()
+        crew = f"fait partie de {datas_perso['crew_id']['french_name']}"
     age=""
     if not datas_perso['age']=="":
         age = f"as {datas_perso['age']}, "
