@@ -198,7 +198,8 @@ class ViewLobby(discord.ui.View):
             self.players.append(interaction.user)
             await interaction.response.edit_message(content=f"nombre de joueurs = {len(self.players)}")
         elif interaction.user in self.players:
-            await interaction.response.send_message(f"vous avez déja rejoins le lobby",ephemeral=True)
+            self.players.remove(interaction.user)
+            await interaction.response.edit_message(content=f"nombre de joueurs = {len(self.players)}")
         elif self.nb_players==len(self.players)+1:
             self.players.append(interaction.user)
             first_player = self.players[random.randint(0,len(self.players)-1)]
