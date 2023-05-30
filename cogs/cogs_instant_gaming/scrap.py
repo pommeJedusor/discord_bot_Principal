@@ -26,6 +26,12 @@ HEADERS = {'authority': 'www.instant-gaming.com',
 'upgrade-insecure-requests': '1',
 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36'}
 
+def delete_doublon(list):
+    new_list=[]
+    for element in list:
+        if not element in new_list:
+            new_list.append(element)
+    return new_list
 
 
 def get_versions(link):
@@ -39,7 +45,7 @@ def get_versions(link):
         versions = [version['data-href'] for version in versions]
         #si édition standart
         if not "edition" in link:
-            return versions
+            return delete_doublon(versions)
     except AttributeError:
         return [link]
 
@@ -65,7 +71,7 @@ def get_versions(link):
             if option.text==edition:
                 final_versions.append(option['data-href'])
                 break
-    return final_versions
+    return delete_doublon(final_versions)
 
 
 async def get_games(name, number):
