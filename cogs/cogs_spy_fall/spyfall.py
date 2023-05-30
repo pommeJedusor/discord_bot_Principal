@@ -8,7 +8,7 @@ def get_locations():
     with open("cogs/cogs_spy_fall/locations.txt","r",encoding="utf8") as f:
         locations = f.read()
         locations = locations.split("\n")
-    return locations
+    return sorted(locations)
 
 
 class DropDownVoteSpy(discord.ui.Select):
