@@ -81,8 +81,12 @@ class InstantGaming(commands.Cog):
     @app_commands.command(name="ig_ajouter_jeu",description="permet d'ajouter un jeu à la liste")
     async def add_game(self,interaction:discord.Interaction,name:str):
         await interaction.response.defer(ephemeral=True)
-        view = DropdownView(self.bot,await scrap.get_games(name=name,number=10))
-        await interaction.edit_original_response(content="choisissez votre jeu",view=view)
+        games = await scrap.get_games(name=name,number=10)
+        if games==[]:
+            await interaction.edit_original_response(content="jeu non trouvé veuillez vérifier l'orhtographe",view=None)
+        else:
+            view = DropdownView(self.bot,games)
+            await interaction.edit_original_response(content="choisissez votre jeu",view=view)
 
     @app_commands.command(name="ig_voir_jeux",description="permet de voir les jeux dont on suit l'activité des prix")
     async def games_ig(self,interaction:discord.Interaction):
