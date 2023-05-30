@@ -38,10 +38,12 @@ class DropdownViewVersions(discord.ui.View):
     
     @discord.ui.button(label="valider")
     async def validate(self,interaction:discord.Interaction, button:discord.Button):
+        await interaction.response.edit_message(content="je réfléchit",view=None)
         self.game.versions = self.versions
         self.game.users.append(interaction.user.id)
+        self.game.price = str(await scrap.get_price(self.game))+"€"
         await database.newgame_dtb(self.game)
-        await interaction.response.send_message(f"{self.versions}")
+        await interaction.edit_original_response(content=f"{self.versions}",view=None)
 
 
 
@@ -59,10 +61,11 @@ class Dropdown(discord.ui.Select):
         super().__init__(placeholder="choisissez la version du jeu", min_values=1, max_values=1, options=options)
 
     async def callback(self, interaction: discord.Interaction):
+        await interaction.response.edit_message(content="je réfléchit",view=None)
         game_name = self.options[int(self.values[0])].label
         games_find = [game for game in self.games_find if game.name==game_name]
         view=DropdownViewVersions(self.bot,games_find[0])
-        await interaction.response.send_message(f"choisisser les versions qui vous intéressent",view=view,ephemeral=True)
+        await interaction.edit_original_response(content=f"choisisser les versions qui vous intéressent",view=view)
 
 class DropdownView(discord.ui.View):
     def __init__(self,bot,games_find):
@@ -77,8 +80,9 @@ class InstantGaming(commands.Cog):
 
     @app_commands.command(name="ig_ajouter_jeu",description="permet d'ajouter un jeu à la liste")
     async def add_game(self,interaction:discord.Interaction,name:str):
+        await interaction.response.defer(ephemeral=True)
         view = DropdownView(self.bot,await scrap.get_games(name=name,number=10))
-        await interaction.response.send_message("choisissez votre jeu",view=view,ephemeral=True)
+        await interaction.edit_original_response(content="choisissez votre jeu",view=view)
 
     @app_commands.command(name="ig_voir_jeux",description="permet de voir les jeux dont on suit l'activité des prix")
     async def games_ig(self,interaction:discord.Interaction):
