@@ -201,7 +201,8 @@ class ViewLobby(discord.ui.View):
             await interaction.response.send_message(f"vous avez déja rejoins le lobby",ephemeral=True)
         elif self.nb_players==len(self.players)+1:
             self.players.append(interaction.user)
-            await interaction.response.edit_message(content=f"la partie a commencé\nnombre de votes: 0",view=ViewParty(self.players))
+            first_player = self.players[random.randint(0,len(self.players)-1)]
+            await interaction.response.edit_message(content=f"<@{first_player.id}> commence la partie et pose une question à un joueur de son choix\nnombre de votes: 0",view=ViewParty(self.players))
 
 class SpyFall(commands.Cog):
     def __init__(self, bot) :
