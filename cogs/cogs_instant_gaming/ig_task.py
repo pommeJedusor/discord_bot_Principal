@@ -10,6 +10,6 @@ async def main():
             await database.update_game(game)
             final_games.append(game)
         elif float(game.price[:-1]) < price:
-            game.price = price
+            game.price = str(price)+"€"
             await database.update_game(game)
     return final_games
