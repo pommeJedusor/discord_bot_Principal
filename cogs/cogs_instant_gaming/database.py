@@ -30,8 +30,17 @@ async def newgame_dtb(game):
     """
     ajoute le jeu à la base de donnéeS
     """
+    found = False
     database = await game_database()
-    database.append(game)
+    for game_dtb in database:
+        if sorted(game_dtb.versions)==sorted(game.versions):
+            if game.users[0] in game_dtb.users:
+                return
+            game_dtb.users.append(game.users[0])
+            found = True
+            break
+    if not found:
+        database.append(game)
     with open(DATA_FILE,'wb') as f:
         pickle.Pickler(f).dump(database)
 
