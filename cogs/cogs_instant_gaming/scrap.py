@@ -120,4 +120,6 @@ async def get_price(game):
         if not nostock:
             price = soup.find('div',{'class':'total'}).text
             prices_versions.append(float(price[:-1]))
+        else:
+            prices_versions.append(1000)
     return min(prices_versions)

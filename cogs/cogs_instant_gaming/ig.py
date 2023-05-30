@@ -90,7 +90,10 @@ class InstantGaming(commands.Cog):
         text="vos jeux:\n"
         for game in games:
             if interaction.user.id in game.users:
-                text+=f"{game.name}: {game.price}\n"
+                if game.price=="1000€":
+                    text+=f"{game.name}: hors stock\n"
+                else:
+                    text+=f"{game.name}: {game.price}\n"
         await interaction.response.send_message(text,ephemeral=True)
 
     @app_commands.command(name="ig_supprimer_jeu",description="permet de supprimer un jeu de ceux que l'on suit")
