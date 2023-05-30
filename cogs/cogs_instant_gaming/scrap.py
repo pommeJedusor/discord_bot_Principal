@@ -37,9 +37,35 @@ def get_versions(link):
         versions = list_version.find('select',{'id':'platforms-choices'})
         versions = versions.findAll('option')
         versions = [version['data-href'] for version in versions]
-        return versions
+        #si édition standart
+        if not "edition" in link:
+            return versions
     except AttributeError:
         return [link]
+
+    #si édition deluxe ou autre édition spéciale
+    #récup l'édition
+    select = soup.find('select',{'id':'editions-choices'})
+    options = select.findAll('option')
+    for option in options:
+        if option['data-href']==link:
+            edition = option.text
+
+    final_versions = []
+    #recup les autres version de la bonne édition
+    for version in versions:
+        r = requests.get(url=version, headers=HEADERS)
+        soup = BeautifulSoup(r.text,'html.parser')
+        select = soup.find('select',{'id':'editions-choices'})
+        if not select:
+            continue
+        options = select.findAll('option')
+
+        for option in options:
+            if option.text==edition:
+                final_versions.append(option['data-href'])
+                break
+    return final_versions
 
 
 async def get_games(name, number):
