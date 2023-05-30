@@ -10,9 +10,19 @@ def get_locations():
         locations = locations.split("\n")
     return sorted(locations)
 
+class GameFinish(discord.ui.View):
+    def __init__(self, old_self) :
+        super().__init__()
+        self.bot = old_self.bot
+        self.players = old_self.players
+
+    @discord.ui.button(label="recommencer")
+    async def restart(self,interaction:discord.Interaction, button:discord.Button):
+        await interaction.response.edit_message(content="la game va recommencer",view=ViewLobby(len(self.players),self.bot))
 
 class DropDownVoteSpy(discord.ui.Select):
     def __init__(self,old_self):
+        self.bot = old_self.bot
         self.players = old_self.players
         self.location = old_self.location
         self.vote = []
@@ -62,9 +72,9 @@ class DropDownVoteSpy(discord.ui.Select):
                     impostor_filter = lambda x: x["is_impostor"]
                     impostor = list(filter(impostor_filter,self.players))
                     if player[0]["is_impostor"]:
-                        await interaction.response.edit_message(content=f"{name_most_voted} était bien l'imposteur et a perdu la partie,\nle lieu était: {self.location}",view=None)
+                        await interaction.response.edit_message(content=f"{name_most_voted} était bien l'imposteur et a perdu la partie,\nle lieu était: {self.location}",view=GameFinish(self))
                     else:
-                        await interaction.response.edit_message(content=f"{name_most_voted} a été voté\nmalheureusement, l'imposteur était {impostor[0]['user'].name}\nle lieu était: {self.location}",view=None)
+                        await interaction.response.edit_message(content=f"{name_most_voted} a été voté\nmalheureusement, l'imposteur était {impostor[0]['user'].name}\nle lieu était: {self.location}",view=GameFinish(self))
                 else:
                     await interaction.response.edit_message(content=f"égalité les votes sont réinitialisés")
                     self.vote=[]
@@ -84,12 +94,14 @@ class DropDownVoteSpy(discord.ui.Select):
 class VoteView(discord.ui.View):
     def __init__(self,old_self):
         super().__init__(timeout=None)
+        self.bot = old_self.bot
         self.players = old_self.players
         self.location = old_self.location
         self.add_item(DropDownVoteSpy(self))
 
 class DropDownViewSpy(discord.ui.Select):
     def __init__(self,old_self):
+        self.bot = old_self.bot
         self.players = old_self.players
         self.location = old_self.location
         options = []
@@ -102,17 +114,18 @@ class DropDownViewSpy(discord.ui.Select):
         player_filter = lambda x: x["user"]==interaction.user
         player = list(filter(player_filter,self.players))
         if player and player[0]["is_impostor"] and self.values[0]==self.location:
-            await interaction.response.edit_message(content=f"{interaction.user.name} a gagné la partie, le lieu était bel et bien {self.location}",view=None)
+            await interaction.response.edit_message(content=f"{interaction.user.name} a gagné la partie, le lieu était bel et bien {self.location}",view=GameFinish(self))
         elif not player:
             await interaction.response.send_message(f"vous n'êtes pas dans la partie",ephemeral=True)
         elif not player[0]["is_impostor"]:
             await interaction.response.send_message(f"vous n'êtes pas l'imposteur",ephemeral=True)
         elif not self.values[0]==self.location:
-            await interaction.response.edit_message(content=f"{interaction.user.name} a perdu la partie, le lieu était {self.location}",view=None)
+            await interaction.response.edit_message(content=f"{interaction.user.name} a perdu la partie, le lieu était {self.location}",view=GameFinish(self))
 
 class SpyView(discord.ui.View):
     def __init__(self,old_self):
         super().__init__()
+        self.bot = old_self.bot
         self.players = old_self.players
         self.location = old_self.location
         self.add_item(DropDownViewSpy(self))
@@ -140,12 +153,13 @@ class ViewParty(discord.ui.View):
         locations = get_locations()
         return random.choice(locations)
 
-    def __init__(self, players):
+    def __init__(self, players, bot):
         super().__init__(timeout=None)
         self.players=self.set_impostor(players)
         self.location = self.set_location()
         self.vote = 0
         self.voteur = []
+        self.bot = bot
 
     
     @discord.ui.button(label="voir le lieu")
@@ -187,10 +201,11 @@ class ViewParty(discord.ui.View):
             await interaction.response.send_message(f"vous n'êtes pas imposteur",ephemeral=True)
 
 class ViewLobby(discord.ui.View):
-    def __init__(self, nb_players):
+    def __init__(self, nb_players, bot):
         super().__init__(timeout=None)
         self.players=[]
         self.nb_players = nb_players
+        self.bot = bot
 
     @discord.ui.button(label="rejoindre")
     async def rejoindre(self,interaction:discord.Interaction, button:discord.Button):
@@ -203,7 +218,7 @@ class ViewLobby(discord.ui.View):
         elif self.nb_players==len(self.players)+1:
             self.players.append(interaction.user)
             first_player = self.players[random.randint(0,len(self.players)-1)]
-            await interaction.response.edit_message(content=f"<@{first_player.id}> commence la partie et pose une question à un joueur de son choix\nnombre de votes: 0",view=ViewParty(self.players))
+            await interaction.response.edit_message(content=f"<@{first_player.id}> commence la partie et pose une question à un joueur de son choix\nnombre de votes: 0",view=ViewParty(self.players, self.bot))
 
 class SpyFall(commands.Cog):
     def __init__(self, bot) :
@@ -211,7 +226,7 @@ class SpyFall(commands.Cog):
 
     @app_commands.command(name="lobby_spy_fall",description="pour lancer la partie de spyfall")
     async def lobby_spy_fall(self, interaction:discord.Interaction, nombre_de_joueurs:int):
-        await interaction.response.send_message(content = "nombre de joueurs = 0",view=ViewLobby(nombre_de_joueurs))
+        await interaction.response.send_message(content = "nombre de joueurs = 0",view=ViewLobby(nombre_de_joueurs,self.bot))
 
 
 async def setup(bot):
