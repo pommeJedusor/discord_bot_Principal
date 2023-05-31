@@ -4,11 +4,7 @@ from discord.ext import commands
 
 import random
 
-def get_locations():
-    with open("cogs/cogs_spy_fall/locations.txt","r",encoding="utf8") as f:
-        locations = f.read()
-        locations = locations.split("\n")
-    return sorted(locations)
+from cogs.cogs_spy_fall import spyfall_db
 
 class GameFinish(discord.ui.View):
     def __init__(self, old_self) :
@@ -105,7 +101,7 @@ class DropDownViewSpy(discord.ui.Select):
         self.players = old_self.players
         self.location = old_self.location
         options = []
-        locations = get_locations()
+        locations = spyfall_db.get_locations()
         for location in locations:
             options.append(discord.SelectOption(label=location,value=location))
         super().__init__(placeholder="choisissez votre réponse", min_values=1, max_values=1, options=options)
@@ -150,7 +146,7 @@ class ViewParty(discord.ui.View):
         return final_players
 
     def set_location(self):
-        locations = get_locations()
+        locations = spyfall_db.get_locations()
         return random.choice(locations)
 
     def __init__(self, players, bot):
