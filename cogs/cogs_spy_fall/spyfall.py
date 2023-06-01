@@ -6,6 +6,12 @@ import random
 
 from cogs.cogs_spy_fall import spyfall_db
 
+def set_location():
+    locations = spyfall_db.get_locations()
+    if locations:
+        return random.choice(locations)
+    return False
+
 class GameFinish(discord.ui.View):
     def __init__(self, old_self) :
         super().__init__()
@@ -14,7 +20,11 @@ class GameFinish(discord.ui.View):
 
     @discord.ui.button(label="recommencer")
     async def restart(self,interaction:discord.Interaction, button:discord.Button):
-        await interaction.response.edit_message(content="la game va recommencer",view=ViewLobby(len(self.players),self.bot))
+        location = set_location()
+        if location:
+            await interaction.response.edit_message(content="la game va recommencer",view=ViewLobby(len(self.players),self.bot,location))
+        else:
+            await interaction.response.send_message(f"euh???\npourquoi y a plus de lieu???\nvous vous foutez de moi vous vener de faire une partie donc il y avait des lieux et maintenant il n'y en a plus???")
 
 class DropDownVoteSpy(discord.ui.Select):
     def __init__(self,old_self):
@@ -145,14 +155,11 @@ class ViewParty(discord.ui.View):
             x-=1
         return final_players
 
-    def set_location(self):
-        locations = spyfall_db.get_locations()
-        return random.choice(locations)
 
-    def __init__(self, players, bot):
+    def __init__(self, players, bot, location):
         super().__init__(timeout=None)
         self.players=self.set_impostor(players)
-        self.location = self.set_location()
+        self.location = location
         self.vote = 0
         self.voteur = []
         self.bot = bot
@@ -197,11 +204,12 @@ class ViewParty(discord.ui.View):
             await interaction.response.send_message(f"vous n'êtes pas imposteur",ephemeral=True)
 
 class ViewLobby(discord.ui.View):
-    def __init__(self, nb_players, bot):
+    def __init__(self, nb_players, bot,location):
         super().__init__(timeout=None)
         self.players=[]
         self.nb_players = nb_players
         self.bot = bot
+        self.location = location
 
     @discord.ui.button(label="rejoindre")
     async def rejoindre(self,interaction:discord.Interaction, button:discord.Button):
@@ -214,7 +222,7 @@ class ViewLobby(discord.ui.View):
         elif self.nb_players==len(self.players)+1:
             self.players.append(interaction.user)
             first_player = self.players[random.randint(0,len(self.players)-1)]
-            await interaction.response.edit_message(content=f"<@{first_player.id}> commence la partie et pose une question à un joueur de son choix\nnombre de votes: 0",view=ViewParty(self.players, self.bot))
+            await interaction.response.edit_message(content=f"<@{first_player.id}> commence la partie et pose une question à un joueur de son choix\nnombre de votes: 0",view=ViewParty(self.players, self.bot,self.location))
 
 class SpyFall(commands.Cog):
     def __init__(self, bot) :
@@ -222,7 +230,11 @@ class SpyFall(commands.Cog):
 
     @app_commands.command(name="spyfall_lobby",description="pour lancer la partie de spyfall")
     async def lobby_spy_fall(self, interaction:discord.Interaction, nombre_de_joueurs:int):
-        await interaction.response.send_message(content = "nombre de joueurs = 0",view=ViewLobby(nombre_de_joueurs,self.bot))
+        location = set_location()
+        if location:
+            await interaction.response.send_message(content = "nombre de joueurs = 0",view=ViewLobby(nombre_de_joueurs,self.bot,location))
+        else:
+            await interaction.response.send_message(content="veuillez ajouter des lieu pour jouer")
 
     @app_commands.command(name="spyfall_nouveau_lieux",description="pour ajouter un lieu")
     async def spyfall_new_location(self, interaction:discord.Interaction, name:str):
