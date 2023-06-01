@@ -220,9 +220,24 @@ class SpyFall(commands.Cog):
     def __init__(self, bot) :
         self.bot = bot
 
-    @app_commands.command(name="lobby_spy_fall",description="pour lancer la partie de spyfall")
+    @app_commands.command(name="spyfall_lobby",description="pour lancer la partie de spyfall")
     async def lobby_spy_fall(self, interaction:discord.Interaction, nombre_de_joueurs:int):
         await interaction.response.send_message(content = "nombre de joueurs = 0",view=ViewLobby(nombre_de_joueurs,self.bot))
+
+    @app_commands.command(name="spyfall_nouveau_lieux",description="pour ajouter un lieu")
+    async def spyfall_new_location(self, interaction:discord.Interaction, name:str):
+        spyfall_db.add_location(name)
+        await interaction.response.send_message(f"le lieu {name} a été ajouté avec succès")
+
+    @app_commands.command(name="spyfall_supprimer_lieu",description="pour retirer un lieu")
+    async def spyfall_delete_location(self, interaction:discord.Interaction, name:str):
+        spyfall_db.delete_location(name)
+        await interaction.response.send_message(f"le lieu {name} a été supprimé avec succès")
+
+    @app_commands.command(name="spyfall_changer_lieux",description="pour ajouter un lieu")
+    async def spyfall_change_location(self, interaction:discord.Interaction, old_name:str, new_name:str):
+        spyfall_db.rename_location(old_name=old_name,new_name=new_name)
+        await interaction.response.send_message(f"le lieu {old_name} a bien été changé en {new_name}")
 
 
 async def setup(bot):
