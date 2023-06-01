@@ -1,6 +1,6 @@
 import sqlite3
 
-DATABASE = "datas/spyfall.db"
+DATABASE = "datas/database.db"
 
 def check_db():
     """vérifie si la database éxiste sinon la crée"""
