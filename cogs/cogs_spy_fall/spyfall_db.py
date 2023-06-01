@@ -4,7 +4,7 @@ DATABASE = "datas/spyfall.db"
 
 def check_db():
     """vérifie si la database éxiste sinon la crée"""
-    connection = sqlite3.connect("DATABASE")
+    connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
     cursor.execute('create table if not exists `locations` (`id_location` INTEGER PRIMARY KEY AUTOINCREMENT, `name_location` varchar(65) not null unique);')
@@ -12,7 +12,7 @@ def check_db():
     connection.close()
 
 def get_locations():
-    connection = sqlite3.connect("DATABASE")
+    connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
     cursor.execute('SELECT * FROM `locations`')
@@ -26,6 +26,22 @@ def add_location(name):
     cursor = connection.cursor()
 
     cursor.execute('INSERT OR IGNORE INTO `locations` (`name_location`) VALUES(?)',(name,))
+    connection.commit()
+    connection.close()
+
+def delete_location(name):
+    connection = sqlite3.connect(DATABASE)
+    cursor = connection.cursor()
+
+    cursor.execute('DELETE FROM `locations` WHERE `name_location` = ?',(name,))
+    connection.commit()
+    connection.close()
+
+def rename_location(old_name, new_name):
+    connection = sqlite3.connect(DATABASE)
+    cursor = connection.cursor()
+
+    cursor.execute('UPDATE `locations` SET `name_location` = ? WHERE `name_location` = ?',(new_name,old_name))
     connection.commit()
     connection.close()
 
