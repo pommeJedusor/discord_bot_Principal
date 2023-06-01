@@ -12,7 +12,6 @@ from cogs.cogs_instant_gaming import ig_task, database
 from datas import datas
 
 bot=commands.Bot(command_prefix="!", intents=discord.Intents.all())
-MY_GUILD = discord.Object(id=datas.GUIL_ID)
 
 
 @bot.event
