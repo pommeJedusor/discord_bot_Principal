@@ -1,8 +1,6 @@
 import sqlite3
 
 DATABASE = "datas/database.db"
-EPIC = 0
-HEARSTONE = 1
 
 def delete():
     con = sqlite3.connect(DATABASE)
