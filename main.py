@@ -9,7 +9,7 @@ from discord.ext import commands, tasks
 from cogs.epicgames_hearstone import check
 from cogs.cogs_instant_gaming import ig_task
 from datas import datas
-from datas import databases
+from datas import id_db
 
 bot=commands.Bot(command_prefix="!", intents=discord.Intents.all())
 
@@ -43,20 +43,20 @@ async def general_check():
     print(new_game)
     #epic game
     if new_game:
-        epic_channel= bot.get_channel(databases.get_id('epic_channel'))
+        epic_channel= bot.get_channel(id_db.get_id('epic_channel'))
         if mention:
-            await epic_channel.send(f"<@&{databases.get_id('epic_role')}>")
+            await epic_channel.send(f"<@&{id_db.get_id('epic_role')}>")
         for new_game in new_game:
             await epic_channel.send(new_game['title']+"\n"+new_game['description'])
             await epic_channel.send(new_game['image'])
     #hearstone
     if maj_hs:
-        hearstone_channel= bot.get_channel(databases.get_id('hs_channel'))
-        await hearstone_channel.send(f"<@&{databases.get_id('role_hs')}>")
+        hearstone_channel= bot.get_channel(id_db.get_id('hs_channel'))
+        await hearstone_channel.send(f"<@&{id_db.get_id('role_hs')}>")
         await hearstone_channel.send(f"nouvelle maj hearstone : {maj_hs['title']}\n{maj_hs['url']}")
     #instant gaming
     games_reduce = await ig_task.main()
-    ig_channel = bot.get_channel(databases.get_id('ig_channel'))
+    ig_channel = bot.get_channel(id_db.get_id('ig_channel'))
     for game in games_reduce:
         await asyncio.sleep(0,2)
         text=""
