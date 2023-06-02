@@ -1,6 +1,6 @@
 import sqlite3
 
-DATABASE = "datas/database.db"
+from datas.file_db import DATABASE
 
 
 def delete():

@@ -1,6 +1,6 @@
 import sqlite3
 
-DATABASE = "datas/database.db"
+from datas.file_db import DATABASE
 
 def check_db():
     """vérifie si la database éxiste sinon la crée"""

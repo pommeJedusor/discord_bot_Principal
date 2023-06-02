@@ -8,7 +8,7 @@ from discord.ext import commands, tasks
 #modules cogs
 from cogs.epicgames_hearstone import check
 from cogs.cogs_instant_gaming import ig_task
-from datas import datas
+from datas import file_db
 from datas import id_db
 
 bot=commands.Bot(command_prefix="!", intents=discord.Intents.all())
@@ -65,4 +65,4 @@ async def general_check():
         await ig_channel.send(f"le jeu {game.name} est désomais à {game.price}\n{text}\n{game.link}")
 
 
-bot.run(datas.BOT_TOKEN)
+bot.run(file_db.get_path("BOT_TOKEN"))
