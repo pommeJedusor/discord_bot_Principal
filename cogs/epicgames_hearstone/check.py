@@ -1,7 +1,5 @@
 import requests, json
 
-import datas.datas as datas
-
 from cogs.epicgames_hearstone import epic_db as epic_db
 from cogs.epicgames_hearstone import hs_db as hs_db
 
