@@ -38,13 +38,14 @@ async def delete_ussop_message(interaction:discord.Interaction):
 @tasks.loop(hours=1)
 async def general_check():
     maj_hs = await check.maj_hearstone()
-    new_game = await check.new_games_epicgames()   
+    new_game, mention = await check.new_games_epicgames()   
     print(maj_hs)
     print(new_game)
     #epic game
     if new_game:
         epic_channel= bot.get_channel(datas.epicgame_channel)
-        await epic_channel.send(f"<@&{datas.role_epicgame}>")
+        if mention:
+            await epic_channel.send(f"<@&{datas.role_epicgame}>")
         for new_game in new_game:
             await epic_channel.send(new_game['title']+"\n"+new_game['description'])
             await epic_channel.send(new_game['image'])

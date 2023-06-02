@@ -1,8 +1,11 @@
-import requests, json, asyncio
+import requests, json
 
 import datas.datas as datas
 
+from cogs.epicgames_hearstone import hs_epic_db as db
+
 async def new_games_epicgames():
+    #récup les jeux gratuits et les stocks dans free_games
     r=requests.get("https://store-site-backend-static-ipv4.ak.epicgames.com/freeGamesPromotions?locale=fr-US&country=BE&allowCountries=BE")
     print("epicgame")
     print(r)
@@ -11,22 +14,9 @@ async def new_games_epicgames():
     for element in elements:
         if element["promotions"] and element["promotions"]["promotionalOffers"] and 0==element["price"]["totalPrice"]["discountPrice"]:
             free_games.append({"title":element["title"],"description":element["description"],"image":element["keyImages"][0]['url'],"date de fin":element["promotions"]["promotionalOffers"][0]["promotionalOffers"][0]["endDate"]})
-    jeux=[]
-    for free_game in free_games:
-        jeux.append(free_game["title"])
-    with open(datas.epicgame_file,"r") as f:
-        ancien_jeux_gratuits=json.loads(f.readline())
-    with open(datas.epicgame_file,"w") as f:
-        f.write(json.dumps(jeux))
-    new_games=[]
-    for free_game in free_games:
-        is_new_game=True
-        for ancien_jeu in ancien_jeux_gratuits:
-            if free_game["title"] == ancien_jeu:
-                is_new_game=False
-        if is_new_game:
-            new_games.append(free_game)
-    return new_games
+
+    return db.new_games(free_games)
+
 
 async def maj_hearstone():
     url2="https://hearthstone.blizzard.com/fr-fr/api/blog/articleList/?page=1&pageSize=1&tagsList[]=patch"
