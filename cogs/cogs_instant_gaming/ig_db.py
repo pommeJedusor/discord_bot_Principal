@@ -54,7 +54,8 @@ def check():
     cursor.close()
     connection.close()
 
-def add_game(name,price,image,link):
+
+def add_game(game):
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
@@ -64,24 +65,88 @@ def add_game(name,price,image,link):
     cursor.close()
     connection.close()
 
-def get_games_player(user_id):
+def create_game(game):
+    connection = sqlite3.connect(DATABASE)
+    cursor = connection.cursor()
+
+    cursor.execute(""""
+        SELECT `game_id`
+        FROM `games_ig`
+        WHERE `name` = ?
+    """,(game.name,))
+    games_match = cursor.fetchall()
+
+    for game_match in games_match:
+        cursor.execute("""
+            SELECT `link_version`, `game_id`
+            FROM `versions_ig`
+            INNER JOIN  `games_ig` on `versions_ig`.`game_ig` = `games_ig`.`game_id`
+            WHERE `name` = ?
+        """,(game.name,))
+
+    cursor.close()
+    connection.close()
+
+def create_user(user_id,game_id):
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
     cursor.execute("""
-        SELECT `name`, `price`, `image`, `link_version`, `link`
-        FROM `users_ig` 
-        INNER JOIN `versions_ig` on `users_ig`.`game_ig` = `versions_ig`.`game_ig`
-        INNER JOIN `games_ig` on `users_ig`.`game_ig` = `games_ig`.`game_id`
-        WHERE `user_id` = ?""",(user_id,))
-    users = cursor.fetchall()
-
-    for user in users:
-        print(f"name: {user[0]}\nprice: {user[1]}\nimage: {user[2]}\nlink {user[3]}\nlink: {user[4]}")
-        print()
-
+        INSERT INTO `users_ig`
+        (`user_ig_id`,`game_ig`,`user_id`)
+        VALUES(?,?,?)
+    """,(None,game_id,user_id))
+    connection.commit()
+    
     cursor.close()
     connection.close()
+
+def add_game(game):
+    #vérifie si le jeu eet ses versions sont déjà dans la base de données
+    connection = sqlite3.connect(DATABASE)
+    cursor = connection.cursor()
+    cursor.execute("""
+            SELECT `game_id`, `link_version`
+            FROM `versions_ig`
+            INNER JOIN  `games_ig` on `versions_ig`.`game_ig` = `games_ig`.`game_id`
+            WHERE `name` = ?
+        """,(game.name,))
+
+    results = cursor.fetchall()
+    cursor.close()
+    connection.close()
+
+    games_match = []
+    
+    for result in results:
+        find = False
+        for game_match in games_match:
+            if game_match[0]==result[0]:
+                find=True
+                game_match[1].append(result[1])
+
+        if not find:
+            games_match.append([result[0],[result[1]]])
+
+    #férifie si les jeux trouvés match parfaitement
+    already_exists = False
+    for game_match in games_match:
+        if sorted(game_match[1]) == sorted(game.versions):
+            already_exists = True
+            game.id = game_match[0]
+    
+    #si le jeu n'éxiste pas encore dans db le créer
+    if not already_exists:
+        create_game(game)
+        create_versions(game)
+        create_user(game.users[0])
+    
+    else:
+        create_user(game.users[0],game.id)
+    
+
+
+
 
 def all_games():
     connection = sqlite3.connect(DATABASE)
@@ -129,3 +194,7 @@ def all_games():
 
 
 check()
+game = Game(None,"sifu",40,"","")
+game.versions = ["poire.com","patate.com"]
+game.users = [13]
+add_game(game)
