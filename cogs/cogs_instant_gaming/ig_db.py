@@ -1,7 +1,6 @@
 import sqlite3
 
-#from datas.file_db import DATABASE
-DATABASE = "datas/database.db"
+from datas.file_db import DATABASE
 
 class Game:
     def __init__(self,id,name,price,image,link):
@@ -135,12 +134,12 @@ async def add_game(game):
     
     #si le jeu n'éxiste pas encore dans db le créer
     if not already_exists:
-        create_game(game)
-        create_versions(game)
-        create_user(game.users[0],game.id)
+        await create_game(game)
+        await create_versions(game)
+        await create_user(game.users[0],game.id)
     
     else:
-        create_user(game.users[0],game.id)
+        await create_user(game.users[0],game.id)
     
 
 

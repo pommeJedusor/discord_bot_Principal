@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
-from cogs.cogs_instant_gaming import scrap, database
+from cogs.cogs_instant_gaming import scrap, ig_db
 
 class DropdownVersions(discord.ui.Select):
     def __init__(self,bot,game,versions):
@@ -41,8 +41,8 @@ class DropdownViewVersions(discord.ui.View):
         await interaction.response.edit_message(content="je réfléchit",view=None)
         self.game.versions = self.versions
         self.game.users.append(interaction.user.id)
-        self.game.price = str(await scrap.get_price(self.game))+"€"
-        await database.newgame_dtb(self.game)
+        self.game.price = await scrap.get_price(self.game)
+        await ig_db.add_game(self.game)
         await interaction.edit_original_response(content=f"{self.versions}",view=None)
 
 
@@ -90,20 +90,20 @@ class InstantGaming(commands.Cog):
 
     @app_commands.command(name="ig_voir_jeux",description="permet de voir les jeux dont on suit l'activité des prix")
     async def games_ig(self,interaction:discord.Interaction):
-        games = await database.game_database()
+        games = await ig_db.all_games()
         text="vos jeux:\n"
         for game in games:
             if interaction.user.id in game.users:
-                if game.price=="1000€":
+                if game.price==1000:
                     text+=f"{game.name}: hors stock\n"
                 else:
-                    text+=f"{game.name}: {game.price}\n"
+                    text+=f"{game.name}: {game.price}€\n"
         await interaction.response.send_message(text,ephemeral=True)
 
     @app_commands.command(name="ig_supprimer_jeu",description="permet de supprimer un jeu de ceux que l'on suit")
     async def delete_game(self,interaction:discord.Interaction,name:str):
         find = False
-        games = await database.game_database()
+        games = await ig_db.all_games()
         for game in games:
             if game.name==name and interaction.user.id in game.users:
                 find = True
@@ -112,10 +112,11 @@ class InstantGaming(commands.Cog):
         if not find:
             await interaction.response.send_message("jeux non trouvé")
         else:
-            await database.delete_game(the_game.name)
-            if not the_game.users == [interaction.user.id]:
-                the_game.users.remove(interaction.user.id)
-                await database.newgame_dtb(the_game)
+            #si unique follower
+            if the_game.users == [interaction.user.id]:
+                await ig_db.delete_game(the_game.id)
+            else:
+                await ig_db.delete_follow(the_game.id,interaction.user.id)
             await interaction.response.send_message(f"le jeu {the_game.name} a été supprimé avec succès",ephemeral=True)
 
         

@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-from cogs.cogs_instant_gaming.database import Game
+from cogs.cogs_instant_gaming.ig_db import Game
 #from database import Game
 
 URL = "https://www.instant-gaming.com/fr/rechercher/?query="
@@ -104,7 +104,7 @@ async def get_games(name, number):
         if not link:
             link = game.find('a',{'class':'cover'})
         link = link['href']
-        Games.append(Game(name,price,image,link))
+        Games.append(Game(None,name,price,image,link))
 
     return Games[:number]
 
