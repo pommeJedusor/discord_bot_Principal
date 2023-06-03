@@ -13,7 +13,6 @@ from datas import id_db
 
 bot=commands.Bot(command_prefix="!", intents=discord.Intents.all())
 
-import transfert
 
 @bot.event
 async def on_ready():
@@ -26,7 +25,6 @@ async def on_ready():
         print(f"synced {len(synced) } command(s)")
     except Exception as e:
         print(e)
-    await transfert.transfert()
     general_check.start()
 
 
