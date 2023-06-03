@@ -200,7 +200,7 @@ def delete_game(game_id):
     cursor.execute('DELETE FROM `versions_ig` WHERE `game_ig` = ?',(game_id,))
     connection.commit()
 
-    #supprime de la table games_ig
+    #supprime de la table users_ig
     cursor.execute('DELETE FROM `users_ig` WHERE `game_ig` = ?',(game_id,))
     connection.commit()
 
@@ -215,6 +215,17 @@ def update_price(game_id,game_price):
     cursor.execute('UPDATE `games_ig` SET `price` = ? WHERE `game_id` = ?',(game_price,game_id))
     connection.commit()
     
+    cursor.close()
+    connection.close()
+
+def delete_follow(game_id, user_id):
+    connection = sqlite3.connect(DATABASE)
+    cursor = connection.cursor()
+
+    cursor.execute('DELETE FROM `users_ig` WHERE `game_ig` = ? AND `user_id` = ?',(game_id,user_id))
+    connection.commit()
+
+
     cursor.close()
     connection.close()
 
