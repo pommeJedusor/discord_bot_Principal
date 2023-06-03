@@ -13,6 +13,7 @@ from datas import id_db
 
 bot=commands.Bot(command_prefix="!", intents=discord.Intents.all())
 
+import transfert
 
 @bot.event
 async def on_ready():
@@ -25,6 +26,7 @@ async def on_ready():
         print(f"synced {len(synced) } command(s)")
     except Exception as e:
         print(e)
+    await transfert.transfert()
     general_check.start()
 
 
@@ -63,6 +65,5 @@ async def general_check():
         for user in game.users:
             text+=f"<@{user}>"
         await ig_channel.send(f"le jeu {game.name} est désomais à {game.price}\n{text}\n{game.link}")
-
 
 bot.run(file_db.get_path("BOT_TOKEN"))
