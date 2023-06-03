@@ -54,35 +54,33 @@ def check():
     cursor.close()
     connection.close()
 
-
-def add_game(game):
+def create_versions(game):
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
-    cursor.execute("INSERT INTO `games_ig`(`game_id`,`name`,`price`,`image`,`link`) VALUES(?,?,?,?,?)",(None, name, price, image, link))
+    cursor.executemany("INSERT INTO `versions_ig`(`version_id`,`link_version`,`game_ig`) VALUES(?,?,?)",[(None,version,game.id) for version in game.versions])
     connection.commit()
 
     cursor.close()
     connection.close()
 
+
+
 def create_game(game):
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
-    cursor.execute(""""
+    cursor.execute("INSERT INTO `games_ig`(`game_id`,`name`,`price`,`image`,`link`) VALUES(?,?,?,?,?)",(None, game.name, game.price, game.image, game.link))
+    connection.commit()
+
+    cursor.execute("""
         SELECT `game_id`
         FROM `games_ig`
         WHERE `name` = ?
     """,(game.name,))
-    games_match = cursor.fetchall()
-
-    for game_match in games_match:
-        cursor.execute("""
-            SELECT `link_version`, `game_id`
-            FROM `versions_ig`
-            INNER JOIN  `games_ig` on `versions_ig`.`game_ig` = `games_ig`.`game_id`
-            WHERE `name` = ?
-        """,(game.name,))
+    results = cursor.fetchall()
+    game_id = results[-1][0]
+    game.id = game_id
 
     cursor.close()
     connection.close()
@@ -139,7 +137,7 @@ def add_game(game):
     if not already_exists:
         create_game(game)
         create_versions(game)
-        create_user(game.users[0])
+        create_user(game.users[0],game.id)
     
     else:
         create_user(game.users[0],game.id)
@@ -194,7 +192,3 @@ def all_games():
 
 
 check()
-game = Game(None,"sifu",40,"","")
-game.versions = ["poire.com","patate.com"]
-game.users = [13]
-add_game(game)
