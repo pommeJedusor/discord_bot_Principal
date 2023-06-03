@@ -208,5 +208,14 @@ def delete_game(game_id):
     cursor.close()
     connection.close()
 
+def update_price(game_id,game_price):
+    connection = sqlite3.connect(DATABASE)
+    cursor = connection.cursor()
+
+    cursor.execute('UPDATE `games_ig` SET `price` = ? WHERE `game_id` = ?',(game_price,game_id))
+    connection.commit()
+    
+    cursor.close()
+    connection.close()
 
 check()
