@@ -158,7 +158,6 @@ def all_games():
     games_table = cursor.fetchall()
     for game_table in games_table:
         game_table
-        print(game_table)
         id, name, price, image, link = game_table
         game_table = Game (id,name,price,image,link)
         games.append(game_table)
@@ -189,6 +188,25 @@ def all_games():
 
     return games
 
+def delete_game(game_id):
+    connection = sqlite3.connect(DATABASE)
+    cursor = connection.cursor()
+
+    #supprime de la table games_ig
+    cursor.execute('DELETE FROM `games_ig` WHERE `game_id` = ?',(game_id,))
+    connection.commit()
+
+    #supprime de la table versions_ig
+    cursor.execute('DELETE FROM `versions_ig` WHERE `game_ig` = ?',(game_id,))
+    connection.commit()
+
+    #supprime de la table games_ig
+    cursor.execute('DELETE FROM `users_ig` WHERE `game_ig` = ?',(game_id,))
+    connection.commit()
+
+
+    cursor.close()
+    connection.close()
 
 
 check()
