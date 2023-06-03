@@ -54,7 +54,7 @@ def check():
     cursor.close()
     connection.close()
 
-def create_versions(game):
+async def create_versions(game):
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
@@ -66,7 +66,7 @@ def create_versions(game):
 
 
 
-def create_game(game):
+async def create_game(game):
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
@@ -85,7 +85,7 @@ def create_game(game):
     cursor.close()
     connection.close()
 
-def create_user(user_id,game_id):
+async def create_user(user_id,game_id):
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
@@ -99,7 +99,7 @@ def create_user(user_id,game_id):
     cursor.close()
     connection.close()
 
-def add_game(game):
+async def add_game(game):
     #vérifie si le jeu eet ses versions sont déjà dans la base de données
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
@@ -146,7 +146,7 @@ def add_game(game):
 
 
 
-def all_games():
+async def all_games():
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
@@ -188,7 +188,7 @@ def all_games():
 
     return games
 
-def delete_game(game_id):
+async def delete_game(game_id):
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
@@ -208,7 +208,7 @@ def delete_game(game_id):
     cursor.close()
     connection.close()
 
-def update_price(game_id,game_price):
+async def update_price(game_id,game_price):
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
@@ -218,7 +218,7 @@ def update_price(game_id,game_price):
     cursor.close()
     connection.close()
 
-def delete_follow(game_id, user_id):
+async def delete_follow(game_id, user_id):
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
