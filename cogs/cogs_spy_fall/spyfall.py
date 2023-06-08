@@ -203,6 +203,10 @@ class ViewParty(discord.ui.View):
         else:
             await interaction.response.send_message(f"vous n'êtes pas imposteur",ephemeral=True)
 
+    @discord.ui.button(label="voir les lieux")
+    async def see_locations(self,interaction:discord.Interaction, button:discord.Button):
+        await interaction.response.send_message(content="",view=LocationsView())
+
 class ViewLobby(discord.ui.View):
     def __init__(self, nb_players, bot,location):
         super().__init__(timeout=None)
@@ -251,6 +255,22 @@ class SpyFall(commands.Cog):
         spyfall_db.rename_location(old_name=old_name,new_name=new_name)
         await interaction.response.send_message(f"le lieu {old_name} a bien été changé en {new_name}")
 
+
+class DropDownLocations(discord.ui.Select):
+    def __init__(self):
+        options = []
+        locations = spyfall_db.get_locations()
+        for location in locations:
+            options.append(discord.SelectOption(label=location,value=location))
+        super().__init__(placeholder="les lieux", min_values=1, max_values=1, options=options)
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.edit_message(content="")
+
+class LocationsView(discord.ui.View):
+    def __init__(self):
+        super().__init__()
+        self.add_item(DropDownLocations())
 
 async def setup(bot):
     await bot.add_cog(SpyFall(bot))
