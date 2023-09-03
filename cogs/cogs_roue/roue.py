@@ -18,6 +18,12 @@ class RoueDeLaGrosseMerde(commands.Cog):
         await interaction.response.send_message(f"suspens...",ephemeral=True)
         await interaction.channel.send(f"<@{member_filtered[alea_number].id}>")
         await interaction.channel.send("https://cdn.discordapp.com/attachments/743439125914320986/1066684359165345932/Snapchat-59690717.jpg")
+        
+    @app_commands.command(name="pile_face",description="faites un pile ou face")    async def pile_face(self, interation:discord.Interaction):
+        if random.randint(0,1):
+            await interaction.response.send_message("pile")
+        else:
+            await interaction.response.send_message("face")
 
 
 async def setup(bot):
