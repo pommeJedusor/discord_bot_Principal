@@ -5,7 +5,7 @@ async def main():
     games = await ig_db.all_games()
     for game in games:
         price = await scrap.get_price(game)
-        if game.price > price:
+        if price and game.price > price:
             game.price = price
             await ig_db.update_price(game.id,game.price)
             final_games.append(game)

@@ -36,6 +36,8 @@ def delete_doublon(list):
 
 def get_versions(link):
     r = requests.get(url = link,headers=HEADERS)
+    if not r.ok:
+        return False
     soup = BeautifulSoup(r.text,'html.parser')
     try:
         list_version = soup.find('div',{'class':'choices'})
@@ -81,6 +83,8 @@ async def get_games(name, number):
     #request
     url = URL+name
     r = requests.get(url=url,headers=HEADERS)
+    if not r.ok:
+        return False
 
     #parsage
     soup = BeautifulSoup(r.text,'html.parser')
@@ -115,6 +119,8 @@ async def get_price(game):
     prices_versions = []
     for version in game.versions:
         r = requests.get(url=version,headers=HEADERS)
+        if not r.ok:
+            return False
         soup = BeautifulSoup(r.text,'html.parser')
         nostock = soup.find('div',{'class':'nostock'})
         if not nostock:

@@ -42,6 +42,9 @@ class DropdownViewVersions(discord.ui.View):
         self.game.versions = self.versions
         self.game.users.append(interaction.user.id)
         self.game.price = await scrap.get_price(self.game)
+        #if error in the process of get the price put nostock
+        if self.game.price == False:
+            self.game.price=1000
         await ig_db.add_game(self.game)
         await interaction.edit_original_response(content=f"{self.versions}",view=None)
 
@@ -82,7 +85,9 @@ class InstantGaming(commands.Cog):
     async def add_game(self,interaction:discord.Interaction,name:str):
         await interaction.response.defer(ephemeral=True)
         games = await scrap.get_games(name=name,number=10)
-        if games==[]:
+        if games==False:
+            await interaction.edit_original_response(content="erreur local veuillez ressayer plus tard",view=None)
+        elif games==[]:
             await interaction.edit_original_response(content="jeu non trouvé veuillez vérifier l'orhtographe",view=None)
         else:
             view = DropdownView(self.bot,games)
