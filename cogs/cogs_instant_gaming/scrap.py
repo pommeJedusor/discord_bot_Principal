@@ -82,13 +82,14 @@ async def get_games(name, number):
     """
     #request
     url = URL+name
-    r = requests.get(url=url,headers=HEADERS)
+    s = requests.Session()
+    r = s.get(url=url,headers=HEADERS)
     if not r.ok:
         return False
 
     #parsage
     soup = BeautifulSoup(r.text,'html.parser')
-    all_games = soup.find('div',{'class':'search listing-games'})
+    all_games = soup.find('div',{'class':'search listing-items'})
     games = all_games.findAll('div',{'class':'item force-badge categoryBest'})
     games.extend(all_games.findAll('div',{'class':'item force-badge'}))
 
