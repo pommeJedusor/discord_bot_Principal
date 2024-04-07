@@ -3,7 +3,7 @@ import requests, json
 from cogs.epicgames_hearstone import epic_db as epic_db
 from cogs.epicgames_hearstone import hs_db as hs_db
 
-async def new_games_epicgames():
+async def new_games_epicgames() -> tuple[list[epic_db.FreeGame], bool]:
     #récup les jeux gratuits et les stocks dans free_games
     r=requests.get("https://store-site-backend-static-ipv4.ak.epicgames.com/freeGamesPromotions?locale=fr-US&country=BE&allowCountries=BE")
     if (not r.ok):
@@ -14,7 +14,12 @@ async def new_games_epicgames():
     elements=json.loads(r.content)["data"]["Catalog"]["searchStore"]["elements"]
     for element in elements:
         if element["promotions"] and element["promotions"]["promotionalOffers"] and 0==element["price"]["totalPrice"]["discountPrice"]:
-            free_games.append({"title":element["title"],"description":element["description"],"image":element["keyImages"][0]['url'],"date de fin":element["promotions"]["promotionalOffers"][0]["promotionalOffers"][0]["endDate"]})
+            free_game = epic_db.FreeGame(
+                element["title"],
+                element["description"],
+                element["keyImages"][0]['url']
+            )
+            free_games.append(free_game)
 
     return epic_db.new_games(free_games)
 

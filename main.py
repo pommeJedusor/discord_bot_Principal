@@ -35,7 +35,7 @@ async def delete_ussop_message(interaction:discord.Interaction):
     await interaction.response.send_message("done",delete_after=2)
 
 @tasks.loop(hours=1)
-async def general_check():
+async def general_check() -> None:
     #get hs datas
     try:
         maj_hs = await check.maj_hearstone()
@@ -47,21 +47,21 @@ async def general_check():
 
     #get epic games datas
     try:
-        new_game, mention = await check.new_games_epicgames()   
+        new_games, should_mention = await check.new_games_epicgames()   
     except Exception as e:
         print("epic game error: ")
         print(e)
-        new_game = False
-    print(new_game)
+        new_games = False
+    print(new_games)
 
     #epic game
-    if new_game:
+    if new_games:
         epic_channel= bot.get_channel(datas.EPIC_GAME_CHANNEL)
-        if mention:
+        if should_mention:
             await epic_channel.send(f"<@&{datas.EPIC_GAME_ROLE}>")
-        for new_game in new_game:
-            await epic_channel.send(new_game['title']+"\n"+new_game['description'])
-            await epic_channel.send(new_game['image'])
+        for new_game in new_games:
+            await epic_channel.send(new_game.title+"\n"+new_game.description)
+            await epic_channel.send(new_game.img_link)
     #hearstone
     if maj_hs:
         hearstone_channel= bot.get_channel(datas.HEARSTONE_CHANNEL)

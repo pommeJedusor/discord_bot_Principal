@@ -2,7 +2,13 @@ import sqlite3
 
 from datas.datas import DATABASE
 
-def delete():
+class FreeGame:
+    def __init__(self, title:str, description:str, img_link:str) -> None:
+        self.title = title
+        self.description = description
+        self.img_link = img_link
+
+def delete() -> None:
     con = sqlite3.connect(DATABASE)
     cur = con.cursor()
 
@@ -12,7 +18,7 @@ def delete():
     cur.close()
     con.close()
 
-def check():
+def check() -> None:
     con = sqlite3.connect(DATABASE)
     cur = con.cursor()
 
@@ -23,7 +29,7 @@ def check():
     con.close()
 
 
-def get_games():
+def get_games() -> None:
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
@@ -36,7 +42,7 @@ def get_games():
     for game in games:
         print(game)
 
-def get_last_games():
+def get_last_games() -> list[str]:
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
@@ -47,7 +53,7 @@ def get_last_games():
     connection.close()
     return [game[0] for game in games]
 
-def add_game(name, is_last):
+def add_game(name:str, is_last:bool) -> None:
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
@@ -57,7 +63,7 @@ def add_game(name, is_last):
     cursor.close()
     connection.close()
 
-def desactivate():
+def desactivate() -> None:
     """
     desactive is_last de tous les jeux
     """
@@ -70,7 +76,7 @@ def desactivate():
     cursor.close()
     connection.close()
 
-def new_games(free_games):
+def new_games(free_games:list[FreeGame]) -> tuple[list[FreeGame], bool]:
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
@@ -80,7 +86,7 @@ def new_games(free_games):
     current_free_games = []
     for free_game in free_games:
         #search the game in the db
-        cursor.execute("SELECT `is_last` FROM `epic_games` WHERE `name` = ? ",(free_game["title"],))
+        cursor.execute("SELECT `is_last` FROM `epic_games` WHERE `name` = ? ",(free_game.title,))
         result = cursor.fetchone()
 
         if not result:
@@ -99,12 +105,12 @@ def new_games(free_games):
 
     #set "last value" in db
     for game in (old_free_games+current_free_games):
-        cursor.execute("UPDATE `epic_games` SET `is_last` = 1 WHERE `name` = ?",(game["title"],))
+        cursor.execute("UPDATE `epic_games` SET `is_last` = 1 WHERE `name` = ?",(game.title,))
         connection.commit()
 
     #add new free games
     for free_game in new_free_games:
-        new_game = (None, free_game["title"], 1)
+        new_game = (None, free_game.title, 1)
         cursor.execute('INSERT INTO `epic_games` (`id`, `name`, `is_last`) VALUES(?,?,?)',new_game)
         connection.commit()
     
