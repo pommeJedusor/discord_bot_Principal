@@ -30,7 +30,7 @@ async def on_ready():
 @bot.tree.command(name="delete_ussop_message")
 async def delete_ussop_message(interaction:discord.Interaction):
     async for message in interaction.channel.history(limit=200):
-        if message.author.id==992095372090540214:
+        if message.author.id==datas.BOT_ID:
             await message.delete()
     await interaction.response.send_message("done",delete_after=2)
 
