@@ -6,6 +6,8 @@ from cogs.epicgames_hearstone import hs_db as hs_db
 async def new_games_epicgames():
     #récup les jeux gratuits et les stocks dans free_games
     r=requests.get("https://store-site-backend-static-ipv4.ak.epicgames.com/freeGamesPromotions?locale=fr-US&country=BE&allowCountries=BE")
+    if (not r.ok):
+        raise Exception(f"error during reception of the datas from epiceGames : {r.headers}")
     print("epicgame")
     print(r)
     free_games=[]

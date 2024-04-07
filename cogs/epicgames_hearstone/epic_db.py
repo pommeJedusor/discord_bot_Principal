@@ -51,7 +51,7 @@ def add_game(name, is_last):
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
-    cursor.execute('INSERT OR IGNORE INTO `epic_games` (`id`, `name`, `is_last`) VALUES(?,?,?)',(cursor.lastrowid, name, is_last))
+    cursor.execute('INSERT OR IGNORE INTO `epic_games` (`id`, `name`, `is_last`) VALUES(?,?,?)',(None, name, is_last))
     connection.commit()
     
     cursor.close()
@@ -74,46 +74,42 @@ def new_games(free_games):
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
-    #récup les jeux qu'ont le même noms que ceux qui sont actuellement gratuits
-    games = []
-    for game_name in free_games:
-        cursor.execute("SELECT `name`, `is_last` FROM `epic_games` WHERE `name` = ? ",(game_name["title"],))
-        result = cursor.fetchone()
-        if result:
-            games.append(result)
-
-    #si pas de nouveau jeu retourne rien
+    #games that have been free some time ago
     new_free_games = []
+    old_free_games = []
+    current_free_games = []
     for free_game in free_games:
-        if not (free_game["title"],1) in games:
+        #search the game in the db
+        cursor.execute("SELECT `is_last` FROM `epic_games` WHERE `name` = ? ",(free_game["title"],))
+        result = cursor.fetchone()
+
+        if not result:
             new_free_games.append(free_game)
-    """
-    if not new_free_games:
-        return False, False"""
+        elif not result[0]:
+            old_free_games.append(free_game)
+        elif result[0]:
+            current_free_games.append(free_game)
 
-    #vérifie si il y a un jeu qui n'as pas déjà été gratuit
-    mention = True
-    if len(games)==len(free_games):
-        mention = False
+    #if there is a free game that has never been free
+    mention = bool(new_free_games)
 
-    #mais tous les jeux en non last
+    #reset "last value" in db
     cursor.execute("UPDATE `epic_games` SET `is_last` = 0 WHERE `is_last` = 1")
     connection.commit()
 
-    #update les nouveaux jeux gratuits si ils étaient déjà dans la base de données
-    for game in games:
-        cursor.execute("UPDATE `epic_games` SET `is_last` = 1 WHERE `name` = ?",(game[0],))
+    #set "last value" in db
+    for game in (old_free_games+current_free_games):
+        cursor.execute("UPDATE `epic_games` SET `is_last` = 1 WHERE `name` = ?",(game["title"],))
         connection.commit()
 
-    #ajoute les nouveaux jeux
+    #add new free games
     for free_game in new_free_games:
-        if not (free_game["title"],0) in games:
-            new_games = (None, free_game["title"], 1)
-            cursor.execute('INSERT INTO `epic_games` (`id`, `name`, `is_last`) VALUES(?,?,?)',new_games)
-            connection.commit()
+        new_game = (None, free_game["title"], 1)
+        cursor.execute('INSERT INTO `epic_games` (`id`, `name`, `is_last`) VALUES(?,?,?)',new_game)
+        connection.commit()
     
     
     connection.close()
-    return new_free_games, mention
+    return (old_free_games+new_free_games), mention
 
 check()
