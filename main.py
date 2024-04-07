@@ -66,7 +66,7 @@ async def general_check() -> None:
     if maj_hs:
         hearstone_channel= bot.get_channel(datas.HEARSTONE_CHANNEL)
         await hearstone_channel.send(f"<@&{datas.HEARSTONE_ROLE}>")
-        await hearstone_channel.send(f"nouvelle maj hearstone : {maj_hs['title']}\n{maj_hs['url']}")
+        await hearstone_channel.send(f"nouvelle maj hearstone : {maj_hs.title}\n{maj_hs.url}")
     #instant gaming
     games_reduce = await ig_task.main()
     ig_channel = bot.get_channel(datas.INSTANT_GAMING_CHANNEL)

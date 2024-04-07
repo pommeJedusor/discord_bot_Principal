@@ -24,22 +24,27 @@ async def new_games_epicgames() -> tuple[list[epic_db.FreeGame], bool]:
     return epic_db.new_games(free_games)
 
 
-async def maj_hearstone():
+class HearstoneMaj:
+    def __init__(self, title:str, url:str) -> None:
+        self.title = title
+        self.url = url
+
+async def maj_hearstone() -> None | HearstoneMaj:
     url2="https://hearthstone.blizzard.com/fr-fr/api/blog/articleList/?page=1&pageSize=1&tagsList[]=patch"
     requete=requests.get(url2)
     print("hearstone")
     print(requete)
     requet_hearstone=json.loads(requete.content)
-    last_maj_hearstone_title=requet_hearstone[0]['title']
-    last_maj_hearstone_url = requet_hearstone[0]["defaultUrl"]
+    last_maj = HearstoneMaj(
+        requet_hearstone[0]['title'],
+        requet_hearstone[0]["defaultUrl"]
+    )
+    
+    last_maj_url = hs_db.get_last_maj()
+    is_first_maj = not last_maj_url
 
-    
-    last_maj_file = hs_db.get_last_maj()
-    
-    if not last_maj_file:
-        hs_db.first_maj(last_maj_hearstone_url)
-        return {"title":last_maj_hearstone_title,"url":last_maj_hearstone_url}
-    elif not last_maj_hearstone_url == last_maj_file:
-        hs_db.new_maj(last_maj_hearstone_url)
-        return {"title":last_maj_hearstone_title,"url":last_maj_hearstone_url}
-    return None
+    #if current == previous
+    if last_maj_url==last_maj.url:return None
+
+    hs_db.new_maj(last_maj.url, is_first_maj)
+    return last_maj

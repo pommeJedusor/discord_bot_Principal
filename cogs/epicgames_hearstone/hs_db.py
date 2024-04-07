@@ -3,7 +3,7 @@ import sqlite3
 from datas.datas import DATABASE
 
 
-def delete():
+def delete() -> None:
     con = sqlite3.connect(DATABASE)
     cur = con.cursor()
 
@@ -13,7 +13,7 @@ def delete():
     cur.close()
     con.close()
 
-def check():
+def check() -> None:
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
@@ -23,7 +23,7 @@ def check():
     cursor.close()
     connection.close()
 
-def get_last_maj():
+def get_last_maj() -> str|bool:
     try:
         connection = sqlite3.connect(DATABASE)
         cursor = connection.cursor()
@@ -36,7 +36,9 @@ def get_last_maj():
     except IndexError:
         return False
 
-def new_maj(link):
+def new_maj(link:str, is_first_maj:bool) -> None:
+    if is_first_maj:return first_maj(link)
+
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
@@ -46,7 +48,7 @@ def new_maj(link):
     cursor.close()
     connection.close()
 
-def first_maj(link):
+def first_maj(link:str) -> None:
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
