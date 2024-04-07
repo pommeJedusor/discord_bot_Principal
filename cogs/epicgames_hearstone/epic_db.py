@@ -1,6 +1,6 @@
 import sqlite3
 
-from datas.file_db import DATABASE
+from datas.datas import DATABASE
 
 def delete():
     con = sqlite3.connect(DATABASE)

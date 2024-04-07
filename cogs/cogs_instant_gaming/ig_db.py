@@ -1,6 +1,6 @@
 import sqlite3
 
-from datas.file_db import DATABASE
+from datas.datas import DATABASE
 
 class Game:
     def __init__(self,id,name,price,image,link):
