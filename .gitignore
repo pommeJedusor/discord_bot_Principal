@@ -1,3 +1,4 @@
 *.db
 __pycache__
 datas/datas.py
+.env
