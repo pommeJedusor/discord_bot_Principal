@@ -29,9 +29,22 @@ async def on_ready():
 
 @bot.tree.command(name="delete_ussop_message")
 async def delete_ussop_message(interaction: discord.Interaction):
-    async for message in interaction.channel.history(limit=200):
-        # TODO remove bot_id from config file (bot.user.id)
-        if message.author.id == datas.BOT_ID:
+    channel = interaction.channel
+    if channel == None:
+        message = "does not have the right to see the channel"
+        await interaction.response.send_message(message)
+        return
+    if not isinstance(channel, discord.TextChannel):
+        message = f"was expecting a channel of type text but got: {type(channel).__name__} for channel of id: {channel.id}"
+        await interaction.response.send_message(message)
+        return
+
+    async for message in channel.history(limit=200):
+        bot_user = bot.user
+        if bot_user == None:
+            await interaction.response.send_message("failed for weird reasons???")
+            return
+        if message.author.id == bot_user.id:
             await message.delete()
     await interaction.response.send_message("done", delete_after=2)
 
