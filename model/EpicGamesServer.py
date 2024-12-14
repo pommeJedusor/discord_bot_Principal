@@ -26,6 +26,19 @@ class EpicGamesServer:
         connection.close()
         return [cls(game[0], game[1], game[2]) for game in games]
 
+    @classmethod
+    def insert_server(cls, server_id: int) -> None:
+        connection = sqlite3.connect(DATABASE)
+        cursor = connection.cursor()
+
+        cursor.execute(
+            "INSERT OR IGNORE INTO `epic_games_server` (`id`) VALUES(?)", (server_id,)
+        )
+        connection.commit()
+
+        cursor.close()
+        connection.close()
+
     def must_mention(self, games: List[str]) -> bool:
         if not self.id or not self.role_id:
             return False
@@ -48,6 +61,34 @@ class EpicGamesServer:
         cursor.close()
         connection.close()
         return False
+
+    @staticmethod
+    def set_channel_id(server_id: int, channel_id: int):
+        connection = sqlite3.connect(DATABASE)
+        cursor = connection.cursor()
+
+        cursor.execute(
+            "UPDATE `epic_games_server` SET `channel_id` = ? WHERE `id` = ?",
+            (channel_id, server_id),
+        )
+        connection.commit()
+
+        cursor.close()
+        connection.close()
+
+    @staticmethod
+    def set_role_id(server_id: int, role_id: int):
+        connection = sqlite3.connect(DATABASE)
+        cursor = connection.cursor()
+
+        cursor.execute(
+            "UPDATE `epic_games_server` SET `role_id` = ? WHERE `id` = ?",
+            (role_id, server_id),
+        )
+        connection.commit()
+
+        cursor.close()
+        connection.close()
 
     @staticmethod
     def init():

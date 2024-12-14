@@ -1,4 +1,5 @@
-import sqlite3
+import sqlite3, requests, json
+from typing import List, Self
 
 from datas.datas import DATABASE
 
@@ -80,3 +81,32 @@ class EpicGamesGames:
 
         cursor.close()
         conn.close()
+
+    @classmethod
+    def scrap_free_games(cls) -> List[Self]:
+        r = requests.get(
+            "https://store-site-backend-static-ipv4.ak.epicgames.com/freeGamesPromotions?locale=fr-US&country=BE&allowCountries=BE"
+        )
+        if not r.ok:
+            raise Exception(
+                f"error during reception of the datas from epiceGames : {r.headers}"
+            )
+
+        free_games = []
+        elements = json.loads(r.content)["data"]["Catalog"]["searchStore"]["elements"]
+        is_free_game = (
+            lambda x: x["promotions"]
+            and x["promotions"]["promotionalOffers"]
+            and 0 == x["price"]["totalPrice"]["discountPrice"]
+        )
+        free_games = filter(is_free_game, elements)
+        free_games = map(
+            lambda x: cls(
+                x["title"],
+                x["description"],
+                x["keyImages"][0]["url"],
+            ),
+            free_games,
+        )
+
+        return [*free_games]

@@ -2,7 +2,6 @@
 import asyncio
 
 # modules discords
-from cogs.epic_games.epic_games import scrap_free_games
 import discord
 from discord.ext import commands, tasks
 
@@ -23,6 +22,7 @@ async def on_ready():
         await bot.load_extension("cogs.cogs_roue.roue")
         await bot.load_extension("cogs.cogs_spy_fall.spyfall")
         await bot.load_extension("cogs.cogs_instant_gaming.ig")
+        await bot.load_extension("cogs.epicgames.epicgames")
         synced = await bot.tree.sync()
         print(f"synced {len(synced) } command(s)")
     except Exception as e:
@@ -82,7 +82,10 @@ async def hs_check() -> None:
 async def epic_check() -> None:
     previous_free_games = set(EpicGamesGames.get_last_games())
     new_free_games = [
-        *filter(lambda x: not x.title in previous_free_games, scrap_free_games())
+        *filter(
+            lambda x: not x.title in previous_free_games,
+            EpicGamesGames.scrap_free_games(),
+        )
     ]
     new_free_games_title = [*map(lambda x: x.title, new_free_games)]
     if not new_free_games:
