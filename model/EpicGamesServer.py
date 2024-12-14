@@ -18,7 +18,7 @@ class EpicGamesServer:
         cursor = connection.cursor()
 
         cursor.execute(
-            "SELECT `id`, `role_id`, `channel_id`  FROM `epic_games_server` WHERE `role_id` IS NOT NULL"
+            "SELECT `id`, `role_id`, `channel_id`  FROM `epic_games_server` WHERE `channel_id` IS NOT NULL"
         )
         games = cursor.fetchall()
 
@@ -27,7 +27,7 @@ class EpicGamesServer:
         return [cls(game[0], game[1], game[2]) for game in games]
 
     def must_mention(self, games: List[str]) -> bool:
-        if not self.id:
+        if not self.id or not self.role_id:
             return False
         server_id: int = int(self.id)
         connection = sqlite3.connect(DATABASE)

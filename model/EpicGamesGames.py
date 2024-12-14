@@ -22,7 +22,7 @@ class EpicGamesGames:
         return [game[0] for game in games]
 
     @staticmethod
-    def desactivate_all() -> None:
+    def unlast_all() -> None:
         """
         deactivate is_last for all games
         """
@@ -45,6 +45,19 @@ class EpicGamesGames:
         cursor.execute(
             "INSERT OR IGNORE INTO `epic_games_games` (`id`, `name`, `is_last`) VALUES(?,?,?)",
             (None, name, is_last),
+        )
+        connection.commit()
+
+        cursor.close()
+        connection.close()
+
+    @staticmethod
+    def set_game_as_last(name: str) -> None:
+        connection = sqlite3.connect(DATABASE)
+        cursor = connection.cursor()
+
+        cursor.execute(
+            "UPDATE `epic_games_games` SET `is_last` = 1 WHERE `name` = ?", (name,)
         )
         connection.commit()
 

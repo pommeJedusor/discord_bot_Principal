@@ -2,6 +2,7 @@
 import asyncio
 
 # modules discords
+from cogs.epic_games.epic_games import scrap_free_games
 import discord
 from discord.ext import commands, tasks
 
@@ -9,6 +10,8 @@ from discord.ext import commands, tasks
 from cogs.epicgames_hearstone import check
 from cogs.cogs_instant_gaming import ig_task
 from datas import datas
+from model.EpicGamesGames import EpicGamesGames
+from model.EpicGamesServer import EpicGamesServer
 
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 
@@ -77,24 +80,34 @@ async def hs_check() -> None:
 
 
 async def epic_check() -> None:
-    try:
-        new_games, should_mention = await check.new_games_epicgames()
-    except Exception as e:
-        print("epic game error: ")
-        print(e)
+    previous_free_games = set(EpicGamesGames.get_last_games())
+    new_free_games = [
+        *filter(lambda x: not x.title in previous_free_games, scrap_free_games())
+    ]
+    new_free_games_title = [*map(lambda x: x.title, new_free_games)]
+    if not new_free_games:
         return
 
-    if not new_games:
-        return
+    for serv in EpicGamesServer.get_valid_servers():
+        assert serv.channel_id != None
+        epic_channel = bot.get_channel(serv.channel_id)
+        if not isinstance(epic_channel, discord.TextChannel):
+            print(f"server channel {serv.channel_id} is not a textchannel")
+            continue
 
-    print(new_games)
-    if new_games:
-        epic_channel = bot.get_channel(datas.EPIC_GAME_CHANNEL)
-        if should_mention:
-            await epic_channel.send(f"<@&{datas.EPIC_GAME_ROLE}>")
-        for new_game in new_games:
+        must_mention = serv.must_mention(new_free_games_title)
+        if must_mention:
+            assert serv.role_id != None
+            await epic_channel.send(f"<@&{serv.role_id}>")
+        for new_game in new_free_games:
             await epic_channel.send(new_game.title + "\n" + new_game.description)
             await epic_channel.send(new_game.img_link)
+
+    EpicGamesGames.unlast_all()
+    for game in new_free_games_title:
+        EpicGamesGames.add_game(game)
+    for game in new_free_games_title:
+        EpicGamesGames.set_game_as_last(game)
 
 
 async def instant_gaming_check() -> None:
